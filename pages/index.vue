@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <main class="home">
     <div class="container">
       <header class="home__header">
         <h1 class="home__title">Star Wars Planets</h1>
@@ -23,8 +23,10 @@
         <p>No planets found. Try adjusting your search criteria.</p>
       </div>
 
-      <div v-if="hasMore && !pending" ref="loadMoreTrigger" class="home__load-more">
-        <button @click="loadMore" class="home__load-button">
+      <!-- Invisible trigger for infinite scroll -->
+      <div v-if="hasMore && canAutoLoad" ref="loadMoreTrigger" class="home__scroll-trigger"></div>
+      <div v-if="hasMore && !canAutoLoad && !pending" class="home__load-more">
+        <button @click="loadMore(false)" class="home__load-button">
           Load More Planets
         </button>
       </div>
@@ -33,7 +35,7 @@
         <SkeletonLoader :count="3" />
       </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <script setup lang="ts">
@@ -56,6 +58,8 @@ const sortOrder = ref<SortOrder>('desc')
 const pending = ref(false)
 const nextUrl = ref<string | null>(null)
 const currentSearchFilters = ref<SearchFilters>({ name: '', population: '' })
+const autoLoadCount = ref(0)
+const MAX_AUTO_LOADS = 3
 
 // Load more trigger for infinite scroll
 const loadMoreTrigger = ref<HTMLElement | null>(null)
@@ -74,6 +78,7 @@ if (initialData.value) {
 
 // Computed
 const hasMore = computed(() => !!nextUrl.value)
+const canAutoLoad = computed(() => autoLoadCount.value < MAX_AUTO_LOADS)
 
 const sortedPlanets = computed(() => {
   const sorted = [...planets.value]
@@ -97,10 +102,10 @@ const sortedPlanets = computed(() => {
   return sorted
 })
 
-// Methods
 const handleSearch = async (filters: SearchFilters) => {
   currentSearchFilters.value = filters
   pending.value = true
+  autoLoadCount.value = 0
 
   try {
     const results = await fetchPlanets(1, filters.name)
@@ -129,6 +134,7 @@ const handleSearch = async (filters: SearchFilters) => {
 const handleReset = async () => {
   currentSearchFilters.value = { name: '', population: '' }
   pending.value = true
+  autoLoadCount.value = 0 // Reset counter on reset
 
   try {
     const results = await fetchPlanets(1)
@@ -141,8 +147,10 @@ const handleReset = async () => {
   }
 }
 
-const loadMore = async () => {
+const loadMore = async (isAutoLoad = false) => {
   if (!nextUrl.value || pending.value) return
+
+  if (isAutoLoad && autoLoadCount.value >= MAX_AUTO_LOADS) return
 
   pending.value = true
 
@@ -164,6 +172,10 @@ const loadMore = async () => {
 
     planets.value = [...planets.value, ...newPlanets]
     nextUrl.value = results.next
+
+    if (isAutoLoad) {
+      autoLoadCount.value++
+    }
   } catch (err) {
     console.error('Load more error:', err)
   } finally {
@@ -172,23 +184,52 @@ const loadMore = async () => {
 }
 
 // Infinite scroll observer
-onMounted(() => {
-  if (!loadMoreTrigger.value) return
+let observer: IntersectionObserver | null = null
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      if (entries[0].isIntersecting && hasMore.value && !pending.value) {
-        loadMore()
-      }
-    },
-    { threshold: 0.1 }
-  )
-
-  observer.observe(loadMoreTrigger.value)
-
-  onUnmounted(() => {
+const setupObserver = () => {
+  if (observer) {
     observer.disconnect()
+    observer = null
+  }
+
+  nextTick(() => {
+    if (!loadMoreTrigger.value) return
+
+    observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore.value && !pending.value && canAutoLoad.value) {
+          loadMore(true)
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    observer.observe(loadMoreTrigger.value)
   })
+}
+
+watch(
+  loadMoreTrigger,
+  (newVal) => {
+    if (newVal) {
+      setupObserver()
+    } else if (observer) {
+      observer.disconnect()
+      observer = null
+    }
+  },
+  { flush: 'post' }
+)
+
+onMounted(() => {
+  setupObserver()
+})
+
+onUnmounted(() => {
+  if (observer) {
+    observer.disconnect()
+    observer = null
+  }
 })
 </script>
 
@@ -269,6 +310,11 @@ onMounted(() => {
 
   &__loading {
     margin-top: $spacing-xl;
+  }
+
+  &__scroll-trigger {
+    height: 1px;
+    width: 100%;
   }
 }
 </style>
