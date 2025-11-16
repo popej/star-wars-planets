@@ -66,14 +66,12 @@ const validationSchema = {
     if (!value) return true
 
     const cleaned = value.replace(/,/g, '')
-    const num = parseInt(cleaned, 10)
 
-    if (isNaN(num)) {
+    // Ensure the cleaned string contains only digits
+    if (!/^\d+$/.test(cleaned)) {
       return 'Population must be a valid number'
     }
-    if (num < 0) {
-      return 'Population must be a positive number'
-    }
+
     return true
   }
 }
