@@ -184,23 +184,52 @@ const loadMore = async (isAutoLoad = false) => {
 }
 
 // Infinite scroll observer
-onMounted(() => {
-  if (!loadMoreTrigger.value) return
+let observer: IntersectionObserver | null = null
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      if (entries[0].isIntersecting && hasMore.value && !pending.value && canAutoLoad.value) {
-        loadMore(true)
-      }
-    },
-    { threshold: 0.1 }
-  )
-
-  observer.observe(loadMoreTrigger.value)
-
-  onUnmounted(() => {
+const setupObserver = () => {
+  if (observer) {
     observer.disconnect()
+    observer = null
+  }
+
+  nextTick(() => {
+    if (!loadMoreTrigger.value) return
+
+    observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore.value && !pending.value && canAutoLoad.value) {
+          loadMore(true)
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    observer.observe(loadMoreTrigger.value)
   })
+}
+
+watch(
+  loadMoreTrigger,
+  (newVal) => {
+    if (newVal) {
+      setupObserver()
+    } else if (observer) {
+      observer.disconnect()
+      observer = null
+    }
+  },
+  { flush: 'post' }
+)
+
+onMounted(() => {
+  setupObserver()
+})
+
+onUnmounted(() => {
+  if (observer) {
+    observer.disconnect()
+    observer = null
+  }
 })
 </script>
 
