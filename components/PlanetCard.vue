@@ -1,7 +1,7 @@
 <template>
   <NuxtLink :to="`/planet/${planet.id}`" class="planet-card">
     <div class="planet-card__header">
-      <h3 class="planet-card__title">{{ planet.name }}</h3>
+      <h2 class="planet-card__title">{{ planet.name }}</h2>
     </div>
     <div class="planet-card__content">
       <div class="planet-card__info">

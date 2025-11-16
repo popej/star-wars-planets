@@ -1,9 +1,8 @@
 <template>
-  <div class="planet-detail">
+  <main class="planet-detail">
     <div class="container">
       <button @click="goBack" class="planet-detail__back">
-        <span class="planet-detail__back-icon">←</span>
-        Back to Planets
+        <span class="planet-detail__back-icon">← Back to Planets</span>
       </button>
 
       <div v-if="planet" class="planet-detail__content">
@@ -60,7 +59,7 @@
         </button>
       </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <script setup lang="ts">
@@ -112,8 +111,8 @@ const goBack = () => {
     align-items: center;
     gap: $spacing-xs;
     padding: $spacing-sm $spacing-md;
-    background-color: $color-bg-secondary;
-    border: 1px solid $color-border;
+    background-color: $color-bg-tertiary;
+    border: 1px solid $color-border-light;
     border-radius: $radius-sm;
     color: $color-text-primary;
     font-size: $font-size-base;
@@ -122,7 +121,7 @@ const goBack = () => {
     transition: all $transition-fast;
 
     &:hover {
-      background-color: $color-bg-tertiary;
+      background-color: $color-bg-hover;
       border-color: $color-accent;
       color: $color-accent;
       transform: translateX(-4px);
@@ -130,6 +129,7 @@ const goBack = () => {
 
     &-icon {
       font-size: $font-size-xl;
+      font-weight: $font-weight-bold;
     }
   }
 
@@ -196,6 +196,7 @@ const goBack = () => {
     font-size: $font-size-xl;
     color: $color-text-primary;
     font-weight: $font-weight-bold;
+    word-break: break-word;
 
     @media (max-width: $breakpoint-mobile) {
       font-size: $font-size-lg;
@@ -204,7 +205,7 @@ const goBack = () => {
 
   &__characteristics {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: $spacing-lg;
   }
 
@@ -213,6 +214,7 @@ const goBack = () => {
     border: 1px solid $color-border;
     border-radius: $radius-md;
     padding: $spacing-md;
+    flex-grow: 1;
   }
 
   &__characteristic-title {

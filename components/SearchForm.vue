@@ -20,7 +20,8 @@
           id="population"
           v-model="population"
           type="text"
-          placeholder="e.g., 1000000"
+          inputmode="numeric"
+          placeholder="e.g., 1000000 or 1,000,000"
           class="search-form__input"
           :class="{ 'search-form__input--error': errors.population }"
         />
@@ -85,9 +86,14 @@ const { value: name } = useField<string>('name', validationSchema.name)
 const { value: population } = useField<string>('population', validationSchema.population)
 
 const onSubmit = handleSubmit((values) => {
+  // Clean population value by removing commas before emitting
+  const cleanedPopulation = values.population
+    ? values.population.replace(/,/g, '')
+    : ''
+
   emit('search', {
     name: values.name || '',
-    population: values.population || ''
+    population: cleanedPopulation
   })
 })
 

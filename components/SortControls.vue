@@ -6,9 +6,10 @@
         @click="handleSort('population')"
         class="sort-controls__button"
         :class="{ 'sort-controls__button--active': sortField === 'population' }"
+        :aria-label="sortField === 'population' ? `Population sorted ${sortOrder === 'asc' ? 'ascending' : 'descending'}` : 'Sort by population'"
       >
         Population
-        <span v-if="sortField === 'population'" class="sort-controls__icon">
+        <span v-if="sortField === 'population'" class="sort-controls__icon" aria-hidden="true">
           {{ sortOrder === 'asc' ? '↑' : '↓' }}
         </span>
       </button>
@@ -16,9 +17,10 @@
         @click="handleSort('distanceFromSun')"
         class="sort-controls__button"
         :class="{ 'sort-controls__button--active': sortField === 'distanceFromSun' }"
+        :aria-label="sortField === 'distanceFromSun' ? `Distance sorted ${sortOrder === 'asc' ? 'ascending' : 'descending'}` : 'Sort by distance'"
       >
         Distance
-        <span v-if="sortField === 'distanceFromSun'" class="sort-controls__icon">
+        <span v-if="sortField === 'distanceFromSun'" class="sort-controls__icon" aria-hidden="true">
           {{ sortOrder === 'asc' ? '↑' : '↓' }}
         </span>
       </button>
