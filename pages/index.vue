@@ -45,7 +45,8 @@ import type { Planet, SortField, SortOrder, SearchFilters } from '../types/plane
 useHead({
   title: 'Star Wars Planets - Explore the Galaxy',
   meta: [
-    { name: 'description', content: 'Browse and search planets from the Star Wars universe. View population, distance from sun, and detailed information.' }
+    { name: 'description', content: 'Browse and search planets from the Star Wars universe. View population, distance from sun, and detailed information.' },
+    { name: 'viewport', content: 'width=device-width, initial-scale=1' }
   ]
 })
 
