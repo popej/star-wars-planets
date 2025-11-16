@@ -133,10 +133,6 @@ const goBack = () => {
     }
   }
 
-  &__content {
-    max-width: 900px;
-  }
-
   &__header {
     margin-bottom: $spacing-xl;
   }
@@ -196,7 +192,6 @@ const goBack = () => {
     font-size: $font-size-xl;
     color: $color-text-primary;
     font-weight: $font-weight-bold;
-    word-break: break-word;
 
     @media (max-width: $breakpoint-mobile) {
       font-size: $font-size-lg;
