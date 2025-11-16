@@ -1,5 +1,22 @@
 <template>
   <main class="home">
+    <StarsBackground
+      :star-density="0.0001"
+      :all-stars-twinkle="true"
+      :twinkle-probability="0.7"
+      :min-twinkle-speed="0.5"
+      :max-twinkle-speed="1"
+    />
+    <ShootingStars
+      :min-speed="10"
+      :max-speed="30"
+      :min-delay="1200"
+      :max-delay="3200"
+      star-color="#FFE81F"
+      trail-color="#FFFFFF"
+      :star-width="100"
+      :star-height="2"
+    />
     <div class="container">
       <header class="home__header">
         <h1 class="home__title">Star Wars Planets</h1>
@@ -240,6 +257,13 @@ onUnmounted(() => {
 .home {
   min-height: 100vh;
   padding: $spacing-xl 0;
+  position: relative;
+  z-index: 10;
+
+  .container {
+    position: relative;
+    z-index: 10;
+  }
 
   &__header {
     text-align: center;
