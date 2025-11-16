@@ -51,7 +51,8 @@ export default defineNuxtConfig({
   router: {
     options: {
       strict: true,
-      hashMode: false
+      hashMode: false,
+      scrollBehaviorType: 'smooth'
     }
   },
 
