@@ -72,7 +72,8 @@ Where the orbital period (in days) is provided by SWAPI. This gives accurate rel
 
 5. **Preview production build**
    ```bash
-   bun/npm run preview
+   bun/npm run build
+   bun/npm run preview:static
    ```
 
 ## 🧪 Testing

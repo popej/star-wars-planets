@@ -86,7 +86,10 @@ const route = useRoute()
 const router = useRouter()
 const { fetchPlanet } = useSwapi()
 
-const planetId = computed(() => parseInt(route.params.id as string, 10))
+const planetId = computed(() => {
+  const id = 'id' in route.params ? route.params.id : null
+  return id ? parseInt(id as string, 10) : 0
+})
 
 // Fetch planet data with SSR
 const { data: planet, error } = await useAsyncData(
